@@ -1,0 +1,76 @@
+pipeline {
+    agent any
+
+    tools {
+        maven 'Maven 3.8.8' // Ensure this matches the Maven version configured in Jenkins
+    }
+
+    environment {
+        DOCKER_IMAGE = 'samurainaga/openmrs-core:latest'
+        GITHUB_REPO = 'https://github.com/Bahmni-code/openmrs-core.git'
+        BRANCH = 'master'
+        AWS_ECR_URI = '692859920769.dkr.ecr.ap-south-1.amazonaws.com/ehrbahmniecr'
+        REGION = 'ap-south-1'
+    }
+
+    stages {
+        stage('Checkout Code') {
+            steps {
+                git branch: "${BRANCH}", url: "${GITHUB_REPO}"
+            }
+        }
+
+        stage('Build with Maven') {
+            steps {
+                bat 'mvn clean install -DskipTests'
+            }
+        }
+
+        stage('Find WAR File and Build Docker Image') {
+            steps {
+                script {
+                    def files = findFiles(glob: 'webapp/target/*.war')
+                    if (files.length == 0) {
+                        error "No WAR files found in webapp/target directory."
+                    }
+                    def warFile = files[0].path
+                    echo "WAR file found: ${warFile}"
+                    bat """
+                    docker build -t ${DOCKER_IMAGE} --build-arg WAR_FILE=${warFile} .
+                    """
+                }
+            }
+        }
+
+        stage('Login to AWS ECR') {
+            steps {
+                script {
+                    bat """
+                    aws ecr get-login-password --region ${REGION} | docker login --username AWS --password-stdin ${AWS_ECR_URI}
+                    """
+                }
+            }
+        }
+
+        stage('Push to AWS ECR') {
+            steps {
+                script {
+                    bat """
+                    docker tag ${DOCKER_IMAGE} ${AWS_ECR_URI}:latest
+                    docker push ${AWS_ECR_URI}:latest
+                    """
+                }
+            }
+        }
+
+        stage('Deploy to ECS') {
+            steps {
+                script {
+                    bat """
+                    aws ecs update-service --cluster your-cluster-name --service your-service-name --force-new-deployment --region ${REGION}
+                    """
+                }
+            }
+        }
+    }
+}

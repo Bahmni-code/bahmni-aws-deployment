@@ -1,0 +1,36 @@
+pipeline {
+    agent any
+ 
+    tools {
+        maven 'Maven 3.8.8' // Ensure this matches the Maven version configured in Jenkins
+    }
+ 
+    environment {
+        //DOCKER_IMAGE = 'samurainaga/openmrs-core:latest'
+        GITHUB_REPO = 'https://github.com/Bahmni-code/bahmni-reports.git'
+        BRANCH = 'master'
+        //BAHMNI_CORE_OMOD_URL='https://jfrog-instance/artifactory/libs-release-local/bahmnicore.omod'
+    }
+ 
+    stages {
+        stage('Checkout Code') {
+            steps {
+                git branch: "${BRANCH}", url: "${GITHUB_REPO}"
+            }
+        }
+ 
+        stage('Build with Maven') {
+            steps {
+                bat 'mvn clean install -DskipTests'
+            }
+        }
+ 
+    
+ 
+       stage('Publish') {
+      steps {
+        sh 'curl -u ${JFROG_USERNAME}:${JFROG_PASSWORD} -T target/*.omod https://jfrog-instance/artifactory/libs-release-local/'
+      }
+    }
+    }
+}
