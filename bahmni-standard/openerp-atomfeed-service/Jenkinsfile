@@ -1,0 +1,57 @@
+pipeline {
+    agent any
+
+    tools {
+        jdk 'JDK 17'
+        maven 'Maven 3.8.8'
+    }
+
+    environment {
+        GITHUB_REPO = 'https://github.com/Bahmni-code/openerp-atomfeed-service.git'
+        BRANCH = 'master'
+        JFROG_URL = 'https://bahmniehr.jfrog.io/artifactory/bhn-openerp-atomfeed-service/'
+        ARTIFACT_NAME = 'openerp-atomfeed-service.war'
+        ARTIFACT_PATH = 'openerp-atomfeed-service/target/'
+    }
+
+    stages {
+        stage('Checkout Code') {
+            steps {
+                git branch: "${BRANCH}", url: "${GITHUB_REPO}"
+            }
+        }
+        stage('Verify Java Version') {
+    steps {
+        bat 'java -version'
+    }
+    }
+
+
+        stage('Build with Maven') {
+            steps {
+                bat 'mvn clean install -DskipTests'
+            }
+        }
+
+        stage('Publish') {
+            steps {
+                withCredentials([usernamePassword(credentialsId: 'jfrog-credentials', usernameVariable: 'JFROG_USERNAME', passwordVariable: 'JFROG_PASSWORD')]) {
+                  bat """
+                    curl -v -u %JFROG_USERNAME%:%JFROG_PASSWORD% \
+                    -T ${ARTIFACT_PATH}${ARTIFACT_NAME} \
+                    ${JFROG_URL}/${ARTIFACT_NAME}
+                    """
+                }
+            }
+        }
+    }
+
+    post {
+        success {
+            echo 'Pipeline executed successfully!'
+        }
+        failure {
+            echo 'Pipeline failed. Check the logs for details.'
+        }
+    }
+}
