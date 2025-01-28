@@ -22,4 +22,5 @@ RUN locale-gen
 RUN chmod +x /usr/local/tomcat/bin/wait-for-it.sh
 RUN chmod +x /usr/local/tomcat/bin/startup.sh
 
-CMD ["/bin/bash","/usr/local/tomcat/bin/startup.sh"]
+#CMD ["/bin/bash","/usr/local/tomcat/bin/startup.sh"]
+CMD ["sh", "/usr/local/tomcat/bin/startup.sh"]
