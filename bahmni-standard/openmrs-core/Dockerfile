@@ -19,7 +19,7 @@ RUN sed -i '/Connector port="8080"/a URIEncoding="UTF-8" relaxedPathChars="[]|" 
 
 RUN locale-gen
 
-RUN chmod +x /usr/local/tomcat/wait-for-it.sh
-RUN chmod +x /usr/local/tomcat/startup.sh
+RUN chmod +x /usr/local/tomcat/bin/wait-for-it.sh
+RUN chmod +x /usr/local/tomcat/bin/startup.sh
 
-CMD ["/usr/local/tomcat/startup.sh"]
+CMD ["/usr/local/tomcat/bin/startup.sh"]
