@@ -2,9 +2,12 @@ FROM tomcat:7-jdk8-adoptopenjdk-hotspot
 
 RUN apt update && apt install -y mysql-client gettext coreutils curl wget openssl
 ARG WAR_FILE
-RUN wget -O /usr/local/tomcat/webapps/openmrs.war ${WAR_FILE}
-COPY setenv.sh /usr/local/tomcat/bin/setenv.sh
+COPY ${WAR_FILE} /usr/local/tomcat/webapps/openmrs.war
+#RUN wget -O /usr/local/tomcat/webapps/openmrs.war ${WAR_FILE}
 
+ARG SETENV
+RUN curl -o /usr/local/tomcat/bin/setenv.sh https://github.com/Bahmni-code/bahmni-aws-deployment/bahmni-standard/openmrs-core/setenv.sh
+#COPY ${SETENV} /usr/local/tomcat/bin/setenv.sh
 COPY wait-for-it.sh /usr/local/tomcat/wait-for-it.sh
 COPY startup.sh /usr/local/tomcat/startup.sh
 
