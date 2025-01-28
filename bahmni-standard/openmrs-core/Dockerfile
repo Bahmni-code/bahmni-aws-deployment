@@ -8,8 +8,8 @@ COPY ${WAR_FILE} /usr/local/tomcat/webapps/openmrs.war
 #ARG SETENV
 RUN curl -o /usr/local/tomcat/bin/setenv.sh https://github.com/Bahmni-code/bahmni-aws-deployment/bahmni-standard/openmrs-core/setenv.sh
 #COPY ${SETENV} /usr/local/tomcat/bin/setenv.sh
-RUN curl -o /usr/local/tomcat/bin/wait-for-it.sh https://github.com/Bahmni-code/bahmni-aws-deployment/bahmni-standard/openmrs-core/wait-for-it.sh
-RUN curl -o /usr/local/tomcat/bin/startup.sh https://github.com/Bahmni-code/bahmni-aws-deployment/bahmni-standard/openmrs-core/startup.sh
+#RUN curl -o /usr/local/tomcat/bin/wait-for-it.sh https://github.com/Bahmni-code/bahmni-aws-deployment/bahmni-standard/openmrs-core/wait-for-it.sh
+#RUN curl -o /usr/local/tomcat/bin/startup.sh https://github.com/Bahmni-code/bahmni-aws-deployment/bahmni-standard/openmrs-core/startup.sh
 
 
 #COPY wait-for-it.sh /usr/local/tomcat/wait-for-it.sh
