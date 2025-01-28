@@ -15,12 +15,12 @@ RUN curl -o /usr/local/tomcat/bin/startup.sh https://github.com/Bahmni-code/bahm
 #COPY wait-for-it.sh /usr/local/tomcat/wait-for-it.sh
 #COPY startup.sh /usr/local/tomcat/startup.sh
 
-RUN sed -i '/Connector port="8080"/a URIEncoding="UTF-8" relaxedPathChars="[]|" relaxedQueryChars="[]|{}^&#x5c;&#x60;&quot;&lt;&gt;"' /usr/local/tomcat/conf/server.xml
+#RUN sed -i '/Connector port="8080"/a URIEncoding="UTF-8" relaxedPathChars="[]|" relaxedQueryChars="[]|{}^&#x5c;&#x60;&quot;&lt;&gt;"' /usr/local/tomcat/conf/server.xml
 
-RUN locale-gen
+#RUN locale-gen
 
-RUN chmod +x /usr/local/tomcat/bin/wait-for-it.sh
-RUN chmod +x /usr/local/tomcat/bin/startup.sh
+#RUN chmod +x /usr/local/tomcat/bin/wait-for-it.sh
+#RUN chmod +x /usr/local/tomcat/bin/startup.sh
 
 #CMD ["/bin/bash","/usr/local/tomcat/bin/startup.sh"]
-CMD ["sh", "/usr/local/tomcat/bin/startup.sh"]
+#CMD ["sh", "/usr/local/tomcat/bin/startup.sh"]
