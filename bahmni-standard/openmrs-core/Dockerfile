@@ -1,6 +1,6 @@
 FROM tomcat:7-jdk8-adoptopenjdk-hotspot
 
-#RUN apt update && apt install -y mysql-client gettext coreutils curl wget openssl
+RUN apt update && apt install -y mysql-client gettext coreutils curl wget openssl
 ARG WAR_FILE
 COPY ${WAR_FILE} /usr/local/tomcat/webapps/openmrs.war
 RUN wget -O /usr/local/tomcat/webapps/openmrs.war ${WAR_FILE}
