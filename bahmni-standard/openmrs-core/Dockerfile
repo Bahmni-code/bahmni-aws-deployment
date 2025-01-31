@@ -34,7 +34,8 @@ EXPOSE 8080
 # Start Tomcat
 #CMD ["catalina.sh", "run"]
 
-CMD ["sh", "-c", "sleep 30 && catalina.sh run"]
+CMD ["/bin/bash", "-c", "sleep 30 && exec catalina.sh run"]
+
 
 
 
