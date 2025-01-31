@@ -32,7 +32,8 @@ WORKDIR /usr/local/tomcat
 EXPOSE 8080
 
 # Start Tomcat
-CMD ["/bin/sh", "-c", "sleep 30 && exec catalina.sh run"]
+CMD ["/bin/bash", "-c", "exec catalina.sh run"]
+
 
 
 
