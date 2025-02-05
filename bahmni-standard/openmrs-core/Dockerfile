@@ -11,8 +11,6 @@ ARG WAR_FILE
 # Copy WAR file from local build context
 COPY ${WAR_FILE} /usr/local/tomcat/webapps/openmrs.war
 
-# Ensure the WAR file has the correct permissions
-RUN chmod 644 /usr/local/tomcat/webapps/openmrs.war
 
 # Download configuration scripts
 RUN curl -o /usr/local/tomcat/bin/setenv.sh https://github.com/Bahmni-code/bahmni-aws-deployment/bahmni-standard/openmrs-core/setenv.sh \
