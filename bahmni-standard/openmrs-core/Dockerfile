@@ -8,8 +8,8 @@ RUN apt update && apt install -y mysql-client gettext coreutils curl wget openss
 # Set argument for WAR file
 ARG WAR_FILE
 
-# Download and deploy the WAR file
-RUN wget -O /usr/local/tomcat/webapps/openmrs.war ${WAR_FILE}
+# Copy WAR file from local build context
+COPY ${WAR_FILE} /usr/local/tomcat/webapps/openmrs.war
 
 # Download configuration scripts
 ARG SETENV
