@@ -12,7 +12,6 @@ ARG WAR_FILE
 COPY ${WAR_FILE} /usr/local/tomcat/webapps/openmrs.war
 
 # Download configuration scripts
-ARG SETENV
 RUN curl -o /usr/local/tomcat/bin/setenv.sh https://github.com/Bahmni-code/bahmni-aws-deployment/bahmni-standard/openmrs-core/setenv.sh \
     && curl -o /usr/local/tomcat/bin/wait-for-it.sh https://github.com/Bahmni-code/bahmni-aws-deployment/bahmni-standard/openmrs-core/wait-for-it.sh \
     && curl -o /usr/local/tomcat/bin/startup.sh https://github.com/Bahmni-code/bahmni-aws-deployment/bahmni-standard/openmrs-core/startup.sh
@@ -21,9 +20,6 @@ RUN curl -o /usr/local/tomcat/bin/setenv.sh https://github.com/Bahmni-code/bahmn
 RUN chmod +x /usr/local/tomcat/bin/wait-for-it.sh \
     && chmod +x /usr/local/tomcat/bin/startup.sh \
     && chmod +x /usr/local/tomcat/bin/setenv.sh
-
-# Set environment script
-COPY ${SETENV} /usr/local/tomcat/bin/setenv.sh
 
 # Improve Tomcat's URI encoding settings for compatibility
 RUN sed -i '/Connector port="8080"/a URIEncoding="UTF-8" relaxedPathChars="[]|" relaxedQueryChars="[]|{}^&#x5c;&#x60;&quot;&lt;&gt;"' /usr/local/tomcat/conf/server.xml
