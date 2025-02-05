@@ -1,42 +1,38 @@
+# Use Tomcat 7 with JDK 8 from AdoptOpenJDK
 FROM tomcat:7-jdk8-adoptopenjdk-hotspot
 
-RUN apt update && apt install -y mysql-client gettext coreutils curl wget openssl
+# Update package list and install required tools
+RUN apt update && apt install -y mysql-client gettext coreutils curl wget openssl locales \
+    && locale-gen en_US.UTF-8
+
+# Set argument for WAR file
 ARG WAR_FILE
-COPY ${WAR_FILE} /usr/local/tomcat/webapps/openmrs.war
+
+# Download and deploy the WAR file
 RUN wget -O /usr/local/tomcat/webapps/openmrs.war ${WAR_FILE}
 
+# Download configuration scripts
+RUN curl -o /usr/local/tomcat/bin/setenv.sh https://github.com/Bahmni-code/bahmni-aws-deployment/bahmni-standard/openmrs-core/setenv.sh \
+    && curl -o /usr/local/tomcat/bin/wait-for-it.sh https://github.com/Bahmni-code/bahmni-aws-deployment/bahmni-standard/openmrs-core/wait-for-it.sh \
+    && curl -o /usr/local/tomcat/bin/startup.sh https://github.com/Bahmni-code/bahmni-aws-deployment/bahmni-standard/openmrs-core/startup.sh
+
+# Ensure scripts have execution permissions
+RUN chmod +x /usr/local/tomcat/bin/wait-for-it.sh \
+    && chmod +x /usr/local/tomcat/bin/startup.sh \
+    && chmod +x /usr/local/tomcat/bin/setenv.sh
+
+# Set environment script
 ARG SETENV
-RUN curl -o /usr/local/tomcat/bin/setenv.sh https://github.com/Bahmni-code/bahmni-aws-deployment/bahmni-standard/openmrs-core/setenv.sh
 COPY ${SETENV} /usr/local/tomcat/bin/setenv.sh
-RUN curl -o /usr/local/tomcat/bin/wait-for-it.sh https://github.com/Bahmni-code/bahmni-aws-deployment/bahmni-standard/openmrs-core/wait-for-it.sh
-RUN curl -o /usr/local/tomcat/bin/startup.sh https://github.com/Bahmni-code/bahmni-aws-deployment/bahmni-standard/openmrs-core/startup.sh
 
-
-COPY wait-for-it.sh /usr/local/tomcat/wait-for-it.sh
-COPY startup.sh /usr/local/tomcat/startup.sh
-
+# Improve Tomcat's URI encoding settings for compatibility
 RUN sed -i '/Connector port="8080"/a URIEncoding="UTF-8" relaxedPathChars="[]|" relaxedQueryChars="[]|{}^&#x5c;&#x60;&quot;&lt;&gt;"' /usr/local/tomcat/conf/server.xml
 
-RUN locale-gen
-
-RUN chmod +x /usr/local/tomcat/bin/wait-for-it.sh
-RUN chmod +x /usr/local/tomcat/bin/startup.sh
-
-#CMD ["/bin/bash","/usr/local/tomcat/bin/startup.sh"]
-CMD ["sh", "/usr/local/tomcat/bin/startup.sh"]
-
-# Set the working directory
+# Set the working directory to Tomcat
 WORKDIR /usr/local/tomcat
 
-# Expose the default Tomcat port
+# Expose Tomcat port
 EXPOSE 8080
 
-# Start Tomcat
-#CMD ["catalina.sh", "run"]
-
-
-
-
-
-
-
+# Start Tomcat properly
+CMD ["catalina.sh", "run"]
